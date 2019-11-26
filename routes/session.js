@@ -3,7 +3,7 @@ var router = express.Router();
 
 router.get('/login', (req, res, next) => {
 	if (req.session.userID) {
-		return res.redirect('/user-info');
+		return res.redirect('/me/info');
 	}
 	res.render('login', {title: 'Login'});
 });
