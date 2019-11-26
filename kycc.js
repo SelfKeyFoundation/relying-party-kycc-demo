@@ -1,26 +1,55 @@
 const request = require('request-promise');
 const jwt = require('jsonwebtoken');
 
+const KYCC_API_URL = 'https://dev.instance.kyc-chain.com';
+const KYCC_API_KEY = 'test';
 class Kycc {
 	parseJWT(token) {
 		return jwt.decode(token, {complete: true, json: true});
 	}
 
-	async fetchApplications(token) {
-		if (!token) {
-			throw new Error('no token');
-		}
-
-		const kyccResponse = await request({
-			url:
-				'https://dev.instance.kyc-chain.com/api/integrations/v2/applications?fields=id,templateId',
-			headers: {
-				authorization: `Bearer ${token}`
+	async login(token) {
+		const user = await request({
+			url: `${KYCC_API_URL}/api/v2/auth/login`,
+			method: 'POST',
+			body: {
+				jwt: token
 			},
 			json: true
 		});
-		console.log('XXX', kyccResponse);
-		return kyccResponse;
+		return user.user;
+	}
+
+	async fetchApplications(templateId, userId) {
+		const applications = await request({
+			url: `${KYCC_API_URL}/integrations/v2/applications?fields=id,owners,template&template_id=${templateId}`,
+			headers: {
+				apiKey: KYCC_API_KEY
+			},
+			json: true
+		});
+		console.log('XXX User id', userId);
+		if (applications && userId) {
+			return applications.items.filter(application => {
+				if (userId && !application.owners.find(owner => owner._id === userId)) {
+					return false;
+				}
+				return true;
+			});
+		}
+		return applications.items;
+	}
+
+	async fetchApplicationDetails(applicationId) {
+		const application = await request({
+			url: `${KYCC_API_URL}/integrations/v2/applications/${applicationId}`,
+			headers: {
+				apiKey: KYCC_API_KEY
+			},
+			json: true
+		});
+		console.log('XXX', application);
+		return application;
 	}
 }
 

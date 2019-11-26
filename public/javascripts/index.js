@@ -14,6 +14,7 @@ const config = {
 	endpoints: {
 		'/users/token': '/auth/token',
 		'/users/file': '/files',
+		'/users': '/lws_users',
 		login: 'http://localhost:3000/lws/login'
 	},
 	attributes: [
