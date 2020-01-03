@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const Users = require('../models/users');
-const {getKYCCUserDataForToken} = require('@selfkey/node-lib');
+const sk = require('@selfkey/node-lib');
 const LWS_TEMPLATE_ID = '5cf4b5b6fc92bd6e67c72f41';
 const KYCC_API_URL = 'https://dev.instance.kyc-chain.com';
 
@@ -16,7 +16,7 @@ router.post('/login', async (req, res, next) => {
 			process: (file, id) => 'processed file url :)'
 		};
 
-		let kyccUser = await getKYCCUserDataForToken(token, {
+		let kyccUser = await sk.kycc.getKYCCUserDataForToken(token, {
 			fileProcessor,
 			templateId: LWS_TEMPLATE_ID,
 			instanceUrl: KYCC_API_URL
@@ -26,9 +26,9 @@ router.post('/login', async (req, res, next) => {
 		if (!user) {
 			user = Users.create({
 				kyccId: kyccUser.id,
-				firstName: kyccUser.attributes.firstName.value,
-				lastName: kyccUser.attributes.lastName.value,
-				email: kyccUser.attributes.email.value
+				firstName: kyccUser.attributes.firstName.data,
+				lastName: kyccUser.attributes.lastName.data,
+				email: kyccUser.attributes.email.data
 			});
 		}
 		req.session.userID = user.id;

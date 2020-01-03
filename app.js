@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
 	session({
-		secret: 'lws-expample',
+		secret: 'rp-kycc-example',
 		resave: false,
 		saveUninitialized: false
 	})
