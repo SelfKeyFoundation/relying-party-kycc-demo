@@ -14,7 +14,16 @@
 git clone https://github.com/SelfKeyFoundation/relying-party-kycc-demo.git
 cd relying-party-kycc-demo
 npm install
+```
+
+### Run
+```sh
 npm start
+```
+
+### Run dev
+```sh
+npm run start-dev
 ```
 
 ### SDK code example
